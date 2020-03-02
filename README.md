@@ -1,4 +1,4 @@
-# Q Assignment - The Grid
+# Q Assignment - The Fibonacci Grid
 
 ## Project setup
 ```
