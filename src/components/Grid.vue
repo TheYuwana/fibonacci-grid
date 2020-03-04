@@ -83,7 +83,7 @@ export default {
       // Fibonacci check
       let rowCount = 0;
       let rowBlocks = [];
-      let fabiA, fabiB, fabiC, fabiD, fabiE;
+      let fiboCelBlocks = [];
 
       // Check every row
       for(var i = 0; i < this.blocks.length; i+=10){
@@ -102,33 +102,61 @@ export default {
         for(var k = 0; k < rowBlocks.length; k++){
           if(k <= 5){
             
-            fabiA = rowBlocks[k];
-            fabiB = rowBlocks[k+1];
-            fabiC = rowBlocks[k+2];
-            fabiD = rowBlocks[k+3];
-            fabiE = rowBlocks[k+4];
+            fiboCelBlocks = [];
+            for(var f = 0; f < 5; f++){
+              fiboCelBlocks[f] = rowBlocks[k+f].number;
+            }
+            fiboCelBlocks = fiboCelBlocks.filter(b => b != undefined);
 
-            if(fabiB.number != 0){
-              if(fabiA.number == fabiB.number){
-                if(fabiC.number == (fabiA.number+fabiB.number)){
-                  if(fabiD.number == (fabiB.number+fabiC.number)){
-                    if(fabiE.number == (fabiC.number+fabiD.number)){
-                      this.fabiSequenced(fabiA.key);
-                      this.fabiSequenced(fabiB.key);
-                      this.fabiSequenced(fabiC.key);
-                      this.fabiSequenced(fabiD.key);
-                      this.fabiSequenced(fabiE.key);
-                      break;
-                    }
-                  }
-                }
+            if(this.fibonaccieArrayCheck(fiboCelBlocks)){
+              for(var f = 0; f < 5; f++){
+                this.fiboSequenced(rowBlocks[k+f].key);
               }
             }
-          }else{
+          }
+        }
+
+      }
+    },
+    // Checks the array if all the digits contains the right Fibonacci digit and sequence
+    fibonaccieArrayCheck(arrToCheck){
+      let validCount = 0;
+      for(var i = 0; i < arrToCheck.length; i++){
+        if(this.fibonacciRangeCheck(arrToCheck[i])){
+          if(i > 1 && arrToCheck[i] > 1){
+            if(arrToCheck[i] == (arrToCheck[i-1] + arrToCheck[i-2])){
+              validCount++;
+            }else{
+              break;
+            }
+          }
+        }else{
+          break;
+        }
+      }
+      return validCount == 3;
+    },
+    // Check if a digit is withtin the Fibonacci sequence
+    fibonacciRangeCheck(cel){
+      let fabiArr = [0, 1];
+      let fabiCount = 0;
+      let valid = false;
+      for(var i = 0; fabiCount <= cel; i++){
+        if(i < 2){
+          if(fabiArr[i] == cel){
+            valid = true;
+            break;
+          }
+        }else{
+          fabiCount = fabiArr[fabiArr.length-1] + fabiArr[fabiArr.length-2]
+          fabiArr.push(fabiCount)
+          if(fabiCount == cel){
+            valid = true;
             break;
           }
         }
       }
+      return valid;
     },
     adjustBlock(key){
       let block = this.blocks[key];
@@ -136,7 +164,7 @@ export default {
       block.classes = {
         'grid-block': true,
         'grid-block-highlighted': true,
-        'grid-block-fabiSequenced': false
+        'grid-block-fiboSequenced': false
       };
       this.$set(this.blocks, key, block)
 
@@ -145,25 +173,25 @@ export default {
         block.classes = {
           'grid-block': true,
           'grid-block-highlighted': false,
-          'grid-block-fabiSequenced': false
+          'grid-block-fiboSequenced': false
 
         };
         this.$set(this.blocks, key, block)
       }, 500)
     },
-    fabiSequenced(key){
+    fiboSequenced(key){
       let block = this.blocks[key];
       block.classes = {
         'grid-block': true,
         'grid-block-highlighted': false,
-        'grid-block-fabiSequenced': true
+        'grid-block-fiboSequenced': true
       };
-      // Remove fabiSequenced after 0.5s
+      // Remove fiboSequenced after 0.5s
       setTimeout(() => {
         block.classes = {
           'grid-block': true,
           'grid-block-highlighted': false,
-          'grid-block-fabiSequenced': false
+          'grid-block-fiboSequenced': false
 
         };
         block.number = 0;
@@ -199,8 +227,8 @@ export default {
       animation: highlighted 0.5s ease-in-out;
     }
 
-    &-fabiSequenced{
-      animation: fabiSequenced 0.5s ease-in-out;
+    &-fiboSequenced{
+      animation: fiboSequenced 0.5s ease-in-out;
     }
   }
 }
@@ -211,7 +239,7 @@ export default {
   100% {background-color: white;}
 }
 
-@keyframes fabiSequenced {
+@keyframes fiboSequenced {
   0%   {background-color: white;}
   50%  {background-color: green;}
   100% {background-color: white;}
